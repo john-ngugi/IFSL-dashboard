@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 const BeneficiariesSection: React.FC = () => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const [offset, setOffset] = useState<number>(0);
+  const [_, setScrollY] = useState(0);
+  const [offset] = useState<number>(0);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
