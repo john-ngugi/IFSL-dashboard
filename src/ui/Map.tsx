@@ -53,6 +53,7 @@ const pulsingLayerStyle: LayerProps = {
 };
 
 const fieldPoints = "data/spatial/field_points.geojson";
+const countyBoundaries = "data/spatial/ken_admin2.geojson";
 
 const MapView: React.FC<MapViewProps> = ({
   width = "100%",
@@ -218,6 +219,17 @@ const MapView: React.FC<MapViewProps> = ({
               filter={["==", ["get", "field_1"], activeFeatureId]}
             />
           )}
+        </Source>
+        <Source id="county-boundaries" type="geojson" data={countyBoundaries}>
+          <Layer
+            id="county-boundaries-layer"
+            type="fill"
+            paint={{
+              "fill-color": "#ff0000",
+              "fill-opacity": 0.2,
+              "fill-outline-color": "white",
+            }}
+          />
         </Source>
       </Map>
 

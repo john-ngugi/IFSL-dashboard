@@ -167,7 +167,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
   return (
     <>
       <div
-        className={`fixed top-20 right-0 h-[calc(100vh-5rem)] w-full md:max-w-full lg:max-w-[480px] xl:max-w-[600px] bg-neutral-900 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-20 right-0 h-[calc(100vh-5rem)] w-full md:max-w-full lg:max-w-[480px] xl:max-w-[650px] bg-neutral-900 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
