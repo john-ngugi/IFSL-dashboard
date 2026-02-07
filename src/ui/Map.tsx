@@ -173,6 +173,21 @@ const MapView: React.FC<MapViewProps> = ({
     setIsPanelOpen(false);
     setActiveFeatureId(null); // 👈 pulse stops here
   };
+
+  const zoomIn = () => {
+    mapRef.current?.easeTo({
+      zoom: mapRef.current.getZoom() + 1,
+      duration: 300,
+    });
+  };
+
+  const zoomOut = () => {
+    mapRef.current?.easeTo({
+      zoom: mapRef.current.getZoom() - 1,
+      duration: 300,
+    });
+  };
+
   return (
     <div style={{ width, height }} className="relative">
       <Map
@@ -223,11 +238,11 @@ const MapView: React.FC<MapViewProps> = ({
         <Source id="county-boundaries" type="geojson" data={countyBoundaries}>
           <Layer
             id="county-boundaries-layer"
-            type="fill"
+            type="line"
             paint={{
-              "fill-color": "#ff0000",
-              "fill-opacity": 0.2,
-              "fill-outline-color": "white",
+              "line-color": "#ffffff", // boundary color
+              "line-width": 3, // make it prominent
+              "line-opacity": 0.9,
             }}
           />
         </Source>
@@ -265,7 +280,10 @@ const MapView: React.FC<MapViewProps> = ({
 
       {/* Zoom Controls */}
       <div className="absolute top-6 right-6 bg-white rounded-lg shadow-lg border border-neutral-200 overflow-hidden">
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-primary-50 transition-colors border-b border-neutral-200">
+        <button
+          className="w-10 h-10 flex items-center justify-center hover:bg-primary-50 transition-colors border-b border-neutral-200"
+          onClick={zoomIn}
+        >
           <svg
             className="w-5 h-5 text-neutral-700"
             fill="none"
@@ -280,7 +298,10 @@ const MapView: React.FC<MapViewProps> = ({
             />
           </svg>
         </button>
-        <button className="w-10 h-10 flex items-center justify-center hover:bg-primary-50 transition-colors">
+        <button
+          className="w-10 h-10 flex items-center justify-center hover:bg-primary-50 transition-colors"
+          onClick={zoomOut}
+        >
           <svg
             className="w-5 h-5 text-neutral-700"
             fill="none"

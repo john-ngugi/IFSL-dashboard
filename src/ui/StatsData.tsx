@@ -39,7 +39,7 @@ const StatsSection: React.FC = () => {
               </svg>
             </div>
             <div className="text-4xl md:text-5xl font-black text-white mb-2">
-              303
+              499
             </div>
             <p className="text-white/80 text-sm font-medium uppercase tracking-wide">
               Farmers
