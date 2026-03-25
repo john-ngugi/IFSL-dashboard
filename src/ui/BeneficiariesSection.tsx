@@ -1,50 +1,81 @@
 import React, { useState, useEffect } from "react";
 
+interface WardData {
+  ward: string;
+  subcounty: string | null;
+  county: string | null;
+  total_points: number;
+}
+
+interface WardStats {
+  total_wards: number;
+  total_points: number;
+  wards: WardData[];
+}
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 const BeneficiariesSection: React.FC = () => {
   const [count, setCount] = useState(0);
+  const [targetCount, setTargetCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [_, setScrollY] = useState(0);
+  const [wardStats, setWardStats] = useState<WardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [offset] = useState<number>(0);
 
+  // Fetch ward data from API
+  useEffect(() => {
+    const fetchWardData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${apiBaseUrl}/api/points-per-ward/`);
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+        const data: WardStats = await response.json();
+        setWardStats(data);
+        setTargetCount(data.total_points);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWardData();
+  }, []);
+
+  // Intersection observer — start counter animation when section visible
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          setIsVisible(true);
-        }
+        if (entries[0].isIntersecting) setIsVisible(true);
       },
       { threshold: 0.3 },
     );
 
     const counterElement = document.getElementById("counter-section");
-    if (counterElement) {
-      observer.observe(counterElement);
-    }
-
+    if (counterElement) observer.observe(counterElement);
     return () => {
-      if (counterElement) {
-        observer.unobserve(counterElement);
-      }
+      if (counterElement) observer.unobserve(counterElement);
     };
   }, []);
 
+  // Animated counter — triggers once data is loaded and section is visible
   useEffect(() => {
-    if (isVisible && count < 303) {
+    if (isVisible && targetCount > 0 && count < targetCount) {
+      const increment = Math.max(1, Math.ceil(targetCount / 150));
       const timer = setTimeout(() => {
-        setCount(count + 1);
-      }, 5);
+        setCount((prev) => Math.min(prev + increment, targetCount));
+      }, 10);
       return () => clearTimeout(timer);
     }
-  }, [count, isVisible]);
+  }, [count, isVisible, targetCount]);
 
+  // Also start counter if already visible when data arrives
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    if (isVisible && targetCount > 0 && count === 0) {
+      setCount(1);
+    }
+  }, [isVisible, targetCount]);
 
   return (
     <section
@@ -92,86 +123,96 @@ const BeneficiariesSection: React.FC = () => {
             </h2>
           </div>
 
-          {/* Total Counter with Animation */}
+          {/* Total Counter */}
           <div className="bg-primary-600/90 backdrop-blur-sm rounded-3xl p-6 md:p-8 mb-8 text-center border border-primary-500/50 shadow-2xl">
             <p className="text-white/90 text-sm md:text-base uppercase tracking-wider mb-2 font-semibold">
               Total Farmers Supported
             </p>
-            <p className="text-5xl md:text-5xl font-black text-white mb-2">
-              {count}
-            </p>
+
+            {loading ? (
+              <div className="flex items-center justify-center gap-2 py-3">
+                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span className="text-white/70 text-lg">Loading...</span>
+              </div>
+            ) : error ? (
+              <p className="text-red-300 text-lg py-3">{error}</p>
+            ) : (
+              <p className="text-5xl md:text-6xl font-black text-white mb-2">
+                {count.toLocaleString()}
+              </p>
+            )}
+
             <p className="text-white/90 text-base md:text-lg">
-              Beneficiaries across Taveta Sub-County
+              Beneficiaries across {wardStats?.wards[0]?.subcounty ?? "Taveta"}{" "}
+              Sub-County
             </p>
+
+            {/* Summary pills */}
+            {wardStats && (
+              <div className="flex items-center justify-center gap-4 mt-4 flex-wrap">
+                <span className="bg-white/15 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  {wardStats.total_wards} Ward
+                  {wardStats.total_wards !== 1 ? "s" : ""}
+                </span>
+                <span className="bg-white/15 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  {wardStats.total_points.toLocaleString()} Total Records
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Village Breakdown */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Bomeni */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xl md:text-2xl font-bold text-white">
-                  Bomeni
-                </h4>
-                <span className="text-3xl md:text-4xl font-black text-primary-400">
-                  37
-                </span>
-              </div>
-              <p className="text-white/80 text-sm">Single village</p>
+          {/* Ward Breakdown Grid */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 animate-pulse"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-6 w-24 bg-white/20 rounded" />
+                    <div className="h-8 w-12 bg-white/20 rounded" />
+                  </div>
+                  <div className="h-4 w-32 bg-white/10 rounded" />
+                </div>
+              ))}
             </div>
-
-            {/* Mata */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xl md:text-2xl font-bold text-white">
-                  Mata
-                </h4>
-                <span className="text-3xl md:text-4xl font-black text-primary-400">
-                  143
-                </span>
-              </div>
-              <p className="text-white/80 text-sm">5 villages</p>
+          ) : error ? (
+            <div className="text-center py-8">
+              <p className="text-white/60 text-sm">
+                Ward breakdown unavailable
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-3 text-primary-400 text-sm underline hover:text-primary-300"
+              >
+                Retry
+              </button>
             </div>
-
-            {/* Chala */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xl md:text-2xl font-bold text-white">
-                  Chala
-                </h4>
-                <span className="text-3xl md:text-4xl font-black text-primary-400">
-                  47
-                </span>
-              </div>
-              <p className="text-white/80 text-sm">4 villages</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {wardStats?.wards.map((ward) => (
+                <div
+                  key={ward.ward}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-xl md:text-2xl font-bold text-white capitalize">
+                      {ward.ward}
+                    </h4>
+                    <span className="text-3xl md:text-4xl font-black text-primary-400">
+                      {ward.total_points.toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-white/70 text-sm">
+                    {ward.subcounty
+                      ? `${ward.subcounty} Sub-County`
+                      : "Sub-County not assigned"}
+                  </p>
+                </div>
+              ))}
             </div>
-
-            {/* Mahoo */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xl md:text-2xl font-bold text-white">
-                  Mahoo
-                </h4>
-                <span className="text-3xl md:text-4xl font-black text-primary-400">
-                  64
-                </span>
-              </div>
-              <p className="text-white/80 text-sm">3 villages</p>
-            </div>
-
-            {/* Mboghonyi */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 transform hover:scale-105 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xl md:text-2xl font-bold text-white">
-                  Mboghonyi
-                </h4>
-                <span className="text-3xl md:text-4xl font-black text-primary-400">
-                  12
-                </span>
-              </div>
-              <p className="text-white/80 text-sm">3 villages</p>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </section>

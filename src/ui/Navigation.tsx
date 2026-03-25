@@ -41,13 +41,13 @@ const Navigation: React.FC = () => {
                 Dashboard
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
               </a>
-              <a
+              {/* <a
                 href="/contact"
                 className="px-6 py-2 text-neutral-700 font-medium hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all duration-300 relative group"
               >
                 Contact
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary-600 group-hover:w-full transition-all duration-300"></span>
-              </a>
+              </a> */}
             </div>
 
             {/* Mobile Menu Button */}

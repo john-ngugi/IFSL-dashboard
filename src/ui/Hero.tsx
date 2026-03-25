@@ -1,6 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const HeroSection: React.FC = () => {
+  const [totalFarmers, setTotalFarmers] = useState(499);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/soil-health-summary/`,
+        );
+        const data = await response.json();
+        setTotalFarmers(data.total_samples);
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+    fetchStats();
+  }, []);
   return (
     <section className="relative bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 overflow-hidden py-20 md:py-32 lg:py-30">
       {/* Decorative Background Elements */}
@@ -126,7 +141,7 @@ const HeroSection: React.FC = () => {
             {/* Stat 1 */}
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
               <div className="text-5xl md:text-6xl font-black text-white mb-2">
-                499
+                {totalFarmers}
               </div>
               <p className="text-white/80 text-sm md:text-base font-medium">
                 Farmers Mapped
