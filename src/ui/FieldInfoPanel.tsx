@@ -29,7 +29,9 @@ interface FieldData {
   GENDER?: string;
   "VALUE CHAIN"?: string;
   FIELD_TYPE?: string;
-  "SOIL PH-H2O (1:2.5)"?: number;
+
+  // Soil Properties (note: double space in "SOIL  PH")
+  "SOIL  PH-H2O (1:2.5)"?: number;
   "ELECT. COND. MS/CM"?: number;
   "TOTAL ORG. CARBON %"?: number;
   "SAND %"?: number;
@@ -44,6 +46,8 @@ interface FieldData {
   "SUM MEQ%"?: number;
   "BASE %"?: number;
   ESP?: number;
+
+  // Water Properties
   PH?: number;
   "CONDUCTIVITY, MS/CM"?: number;
   "SODIUM, ME/LITRE"?: number;
@@ -55,6 +59,8 @@ interface FieldData {
   "CHLORIDES, ME/LITRE"?: number;
   "SULPHATES, ME/LITRE"?: string;
   "SODIUM ADSORPTION RATIO"?: number;
+
+  // Goat Farming
   "BREEDS KEPT"?: string;
   "NO. OF GOATS KEPT"?: string;
   "FARMING SYSTEM PRACTISED"?: string;
@@ -67,6 +73,8 @@ interface FieldData {
   "MANAGEMENT PRACTICES"?: string;
   "PESTS AND PARASITES CONTROL METHODS"?: string;
   "FARMING INFORMATION SOURCES"?: string;
+
+  // Poultry Farming
   "POULTRY BREEDS"?: string;
   "NUMBER OF BIRDS"?: number;
   "HATCHING TECHNIQUE"?: string;
@@ -90,7 +98,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
   data,
 }) => {
   if (!data) return null;
-
+  console.log("Field Data:", data);
   const renderValue = (value: any) => {
     if (value === null || value === undefined || value === "") return "N/A";
     if (typeof value === "boolean") return value ? "Yes" : "No";
@@ -100,7 +108,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
   const classifications = useMemo(() => {
     if (!data) return null;
     return {
-      pH: classifyPH(data["SOIL PH-H2O (1:2.5)"]),
+      pH: classifyPH(data["SOIL  PH-H2O (1:2.5)"]),
       ec: classifyEC(data["ELECT. COND. MS/CM"]),
       cec: classifyCEC(data["CAT. EXCH. CAP. MEQ%"]),
       esp: classifyESP(data.ESP),
@@ -167,7 +175,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
   return (
     <>
       <div
-        className={`fixed top-20 right-0 h-[calc(100vh-5rem)] w-full md:max-w-full lg:max-w-[480px] xl:max-w-[650px] bg-neutral-900 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-20 right-0 h-[calc(100vh-5rem)] w-full md:max-w-full lg:max-w-[480px] xl:max-w-[500px] bg-neutral-900 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -410,7 +418,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
                           </p>
                         </div>
                         <p className="text-lg font-semibold text-neutral-900">
-                          {renderValue(data["SOIL PH-H2O (1:2.5)"])}
+                          {renderValue(data["SOIL  PH-H2O (1:2.5)"])}
                         </p>
                       </div>
                       <ClassificationBadge
