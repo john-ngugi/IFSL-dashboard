@@ -12,6 +12,7 @@ interface WardStats {
   total_points: number;
   wards: WardData[];
 }
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const BeneficiariesSection: React.FC = () => {
   const [count, setCount] = useState(0);
@@ -27,9 +28,7 @@ const BeneficiariesSection: React.FC = () => {
     const fetchWardData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(
-          "http://localhost:8000/api/points-per-ward/",
-        );
+        const response = await fetch(`${apiBaseUrl}/api/points-per-ward/`);
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         const data: WardStats = await response.json();
         setWardStats(data);
