@@ -126,7 +126,7 @@ const HeroSection: React.FC = () => {
             {/* Stat 1 */}
             <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all duration-300">
               <div className="text-5xl md:text-6xl font-black text-white mb-2">
-                500
+                499
               </div>
               <p className="text-white/80 text-sm md:text-base font-medium">
                 Farmers Mapped

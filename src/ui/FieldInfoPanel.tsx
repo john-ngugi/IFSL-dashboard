@@ -96,7 +96,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
     if (typeof value === "boolean") return value ? "Yes" : "No";
     return value.toString();
   };
-
+  // console.log("Field Data:", data);
   const classifications = useMemo(() => {
     if (!data) return null;
     return {
@@ -111,7 +111,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
       sodium: classifyNutrient(data["SODIUM MEQ%"], "sodium"),
     };
   }, [data]);
-
+  // console.log("Field Data:", data);
   const recommendations = useMemo(() => {
     if (!data) return [];
     return generateRecommendations(data);
@@ -202,7 +202,7 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
         </div>
 
         <div className="h-[calc(100%-88px)] overflow-y-auto p-6 space-y-6 bg-neutral-50">
-          {summary && (
+          {data["FIELD_TYPE"] === "Soil" && summary && (
             <section className="bg-white  border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
                 <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
@@ -285,7 +285,6 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </section>
           )}
-
           {recommendations.length > 0 && (
             <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
@@ -322,7 +321,6 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </section>
           )}
-
           <section className="bg-white border border-neutral-200 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
               <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
@@ -366,7 +364,6 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </div>
           </section>
-
           <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
             <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
               <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
@@ -394,171 +391,179 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </div>
           </section>
-
-          <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
-              <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
-                Soil Properties & Analysis
-              </h3>
-            </div>
-            <div className="p-6 space-y-4">
-              {classifications && (
-                <>
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <StatusIndicator status={classifications.pH.status} />
-                        <p className="text-sm font-semibold text-neutral-700">
-                          Soil pH
+          {data["FIELD_TYPE"] === "Soil" && (
+            <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
+                <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
+                  Soil Properties & Analysis
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                {classifications && (
+                  <>
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <StatusIndicator status={classifications.pH.status} />
+                          <p className="text-sm font-semibold text-neutral-700">
+                            Soil pH
+                          </p>
+                        </div>
+                        <p className="text-lg font-semibold text-neutral-900">
+                          {renderValue(data["SOIL PH-H2O (1:2.5)"])}
                         </p>
                       </div>
-                      <p className="text-lg font-semibold text-neutral-900">
-                        {renderValue(data["SOIL PH-H2O (1:2.5)"])}
-                      </p>
+                      <ClassificationBadge
+                        classification={classifications.pH}
+                      />
+                      {classifications.pH.remarks && (
+                        <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                          {classifications.pH.remarks}
+                        </p>
+                      )}
                     </div>
-                    <ClassificationBadge classification={classifications.pH} />
-                    {classifications.pH.remarks && (
-                      <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
-                        {classifications.pH.remarks}
-                      </p>
-                    )}
-                  </div>
 
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <StatusIndicator status={classifications.ec.status} />
-                        <p className="text-sm font-semibold text-neutral-700">
-                          Electrical Conductivity
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <StatusIndicator status={classifications.ec.status} />
+                          <p className="text-sm font-semibold text-neutral-700">
+                            Electrical Conductivity
+                          </p>
+                        </div>
+                        <p className="text-lg font-semibold text-neutral-900">
+                          {renderValue(data["ELECT. COND. MS/CM"])} dS/m
                         </p>
                       </div>
-                      <p className="text-lg font-semibold text-neutral-900">
-                        {renderValue(data["ELECT. COND. MS/CM"])} dS/m
-                      </p>
-                    </div>
-                    <ClassificationBadge classification={classifications.ec} />
-                    {classifications.ec.remarks && (
-                      <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
-                        {classifications.ec.remarks}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <StatusIndicator status={classifications.cec.status} />
-                        <p className="text-sm font-semibold text-neutral-700">
-                          Cation Exchange Capacity
+                      <ClassificationBadge
+                        classification={classifications.ec}
+                      />
+                      {classifications.ec.remarks && (
+                        <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                          {classifications.ec.remarks}
                         </p>
-                      </div>
-                      <p className="text-lg font-semibold text-neutral-900">
-                        {renderValue(data["CAT. EXCH. CAP. MEQ%"])} meq%
-                      </p>
+                      )}
                     </div>
-                    <ClassificationBadge classification={classifications.cec} />
-                    {classifications.cec.remarks && (
-                      <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
-                        {classifications.cec.remarks}
-                      </p>
-                    )}
-                  </div>
 
-                  {data.ESP !== undefined && (
                     <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <StatusIndicator
-                            status={classifications.esp.status}
+                            status={classifications.cec.status}
                           />
                           <p className="text-sm font-semibold text-neutral-700">
-                            Exchangeable Sodium Percentage
+                            Cation Exchange Capacity
                           </p>
                         </div>
                         <p className="text-lg font-semibold text-neutral-900">
-                          {renderValue(data.ESP)}%
+                          {renderValue(data["CAT. EXCH. CAP. MEQ%"])} meq%
                         </p>
                       </div>
                       <ClassificationBadge
-                        classification={classifications.esp}
+                        classification={classifications.cec}
                       />
-                      {classifications.esp.remarks && (
+                      {classifications.cec.remarks && (
                         <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
-                          {classifications.esp.remarks}
+                          {classifications.cec.remarks}
                         </p>
                       )}
                     </div>
-                  )}
 
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <StatusIndicator
-                          status={classifications.organicCarbon.status}
+                    {data.ESP !== undefined && (
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <StatusIndicator
+                              status={classifications.esp.status}
+                            />
+                            <p className="text-sm font-semibold text-neutral-700">
+                              Exchangeable Sodium Percentage
+                            </p>
+                          </div>
+                          <p className="text-lg font-semibold text-neutral-900">
+                            {renderValue(data.ESP)}%
+                          </p>
+                        </div>
+                        <ClassificationBadge
+                          classification={classifications.esp}
                         />
-                        <p className="text-sm font-semibold text-neutral-700">
-                          Total Organic Carbon
-                        </p>
+                        {classifications.esp.remarks && (
+                          <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                            {classifications.esp.remarks}
+                          </p>
+                        )}
                       </div>
-                      <p className="text-lg font-semibold text-neutral-900">
-                        {renderValue(data["TOTAL ORG. CARBON %"])}%
-                      </p>
-                    </div>
-                    <ClassificationBadge
-                      classification={classifications.organicCarbon}
-                    />
-                    {classifications.organicCarbon.remarks && (
-                      <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
-                        {classifications.organicCarbon.remarks}
-                      </p>
                     )}
-                  </div>
 
-                  <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
-                    <p className="text-sm font-semibold text-neutral-700 mb-3">
-                      Soil Texture
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                          Texture Class
-                        </p>
-                        <p className="text-sm font-medium text-neutral-900">
-                          {renderValue(data["TEXTURE CLASS"])}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                          Sand
-                        </p>
-                        <p className="text-sm font-medium text-neutral-900">
-                          {renderValue(data["SAND %"])}%
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <StatusIndicator
+                            status={classifications.organicCarbon.status}
+                          />
+                          <p className="text-sm font-semibold text-neutral-700">
+                            Total Organic Carbon
+                          </p>
+                        </div>
+                        <p className="text-lg font-semibold text-neutral-900">
+                          {renderValue(data["TOTAL ORG. CARBON %"])}%
                         </p>
                       </div>
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                          Silt
+                      <ClassificationBadge
+                        classification={classifications.organicCarbon}
+                      />
+                      {classifications.organicCarbon.remarks && (
+                        <p className="text-xs text-neutral-600 mt-2 leading-relaxed">
+                          {classifications.organicCarbon.remarks}
                         </p>
-                        <p className="text-sm font-medium text-neutral-900">
-                          {renderValue(data["SILT %"])}%
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                          Clay
-                        </p>
-                        <p className="text-sm font-medium text-neutral-900">
-                          {renderValue(data["CLAY %"])}%
-                        </p>
+                      )}
+                    </div>
+
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-md p-4">
+                      <p className="text-sm font-semibold text-neutral-700 mb-3">
+                        Soil Texture
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                            Texture Class
+                          </p>
+                          <p className="text-sm font-medium text-neutral-900">
+                            {renderValue(data["TEXTURE CLASS"])}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                            Sand
+                          </p>
+                          <p className="text-sm font-medium text-neutral-900">
+                            {renderValue(data["SAND %"])}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                            Silt
+                          </p>
+                          <p className="text-sm font-medium text-neutral-900">
+                            {renderValue(data["SILT %"])}%
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                            Clay
+                          </p>
+                          <p className="text-sm font-medium text-neutral-900">
+                            {renderValue(data["CLAY %"])}%
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </section>
-
-          {classifications && (
+                  </>
+                )}
+              </div>
+            </section>
+          )}
+          {data["FIELD_TYPE"] === "Soil" && classifications && (
             <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
                 <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
@@ -642,7 +647,6 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </section>
           )}
-
           {(data["BREEDS KEPT"] || data["NO. OF GOATS KEPT"]) && (
             <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
@@ -688,7 +692,6 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
               </div>
             </section>
           )}
-
           {(data["POULTRY BREEDS"] || data["NUMBER OF BIRDS"]) && (
             <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
               <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
@@ -735,41 +738,45 @@ const FieldInfoPanel: React.FC<FieldInfoPanelProps> = ({
             </section>
           )}
 
-          <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
-            <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
-              <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
-                Farming Practices
-              </h3>
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                    Farming System
-                  </p>
-                  <p className="text-sm font-medium text-neutral-900">
-                    {renderValue(data["FARMING SYSTEM PRACTISED"])}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                    Value Addition
-                  </p>
-                  <p className="text-sm font-medium text-neutral-900">
-                    {renderValue(data["VALUE ADDITION"])}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
-                    Marketing Group
-                  </p>
-                  <p className="text-sm font-medium text-neutral-900">
-                    {renderValue(data["ORGANIZED MARKETING GROUP MEMBERSHIP"])}
-                  </p>
+          {data["FIELD_TYPE"] === "livestock" && (
+            <section className="bg-white rounded-md border border-neutral-200 shadow-sm overflow-hidden">
+              <div className="bg-gradient-to-r from-neutral-50 to-neutral-100 px-6 py-4 border-b border-neutral-200">
+                <h3 className="text-base font-semibold text-neutral-900 tracking-tight">
+                  Farming Practices
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                      Farming System
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {renderValue(data["FARMING SYSTEM PRACTISED"])}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                      Value Addition
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {renderValue(data["VALUE ADDITION"])}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-neutral-500 uppercase tracking-wider font-medium mb-1">
+                      Marketing Group
+                    </p>
+                    <p className="text-sm font-medium text-neutral-900">
+                      {renderValue(
+                        data["ORGANIZED MARKETING GROUP MEMBERSHIP"],
+                      )}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
         </div>
       </div>
     </>
