@@ -59,8 +59,7 @@ const FeaturesSection: React.FC = () => {
         </svg>
       ),
       title: "Farmer Support",
-      description:
-        "Direct assistance to 303 farmers with training, resources, and market linkages.",
+      description: "Direct assistance to farmers with training and resources",
     },
     {
       icon: (
