@@ -204,11 +204,11 @@ const BeneficiariesSection: React.FC = () => {
                       {ward.total_points.toLocaleString()}
                     </span>
                   </div>
-                  <p className="text-white/70 text-sm">
+                  {/* <p className="text-white/70 text-sm">
                     {ward.subcounty
                       ? `${ward.subcounty} Sub-County`
                       : "Sub-County not assigned"}
-                  </p>
+                  </p> */}
                 </div>
               ))}
             </div>
