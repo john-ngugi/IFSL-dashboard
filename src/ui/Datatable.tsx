@@ -223,11 +223,20 @@ const DataTable: React.FC<FarmerDataTableProps> = ({
     );
   }
 
-  const soilCount =
-    data?.results.filter((s) => s.field_type === "Soil").length || 0;
-  const livestockCount =
-    data?.results.filter((s) => s.field_type === "Livestock").length || 0;
-  const otherCount = (data?.count || 0) - soilCount - livestockCount;
+ const soilCount =
+  data?.results.filter(
+    (s) => (s.field_type || "").toLowerCase().trim() === "soil"
+  ).length || 0;
+
+const livestockCount =
+  data?.results.filter(
+    (s) => (s.field_type || "").toLowerCase().trim() === "livestock"
+  ).length || 0;
+
+const otherCount =
+  data?.results.filter(
+    (s) => (s.field_type || "").toLowerCase().trim() === "water"
+  ).length || 0;
 
   return (
     <div className="bg-white border border-neutral-200 shadow-md overflow-y-auto max-h-[70vh]">
@@ -255,7 +264,7 @@ const DataTable: React.FC<FarmerDataTableProps> = ({
                 Farmer Records
               </h2>
               <p className="text-sm text-neutral-600">
-                {soilCount} soil, {livestockCount} livestock, {otherCount} other
+                {soilCount} soil · {livestockCount} livestock  · {otherCount} Water
               </p>
             </div>
           </div>
@@ -352,7 +361,7 @@ const DataTable: React.FC<FarmerDataTableProps> = ({
             <div className="flex items-center gap-2 mb-1">
               <AlertCircle className="w-4 h-4 text-gray-600" />
               <p className="text-xs text-neutral-500 uppercase font-semibold">
-                Other
+                Water
               </p>
             </div>
             <p className="text-2xl font-bold text-neutral-900">{otherCount}</p>

@@ -88,16 +88,22 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     );
   }
 
-  // ===== SPLIT BY TYPE =====
-  const soilFarmers = data.results.filter((s) => s.field_type === "Soil");
-  const livestockFarmers = data.results.filter(
-    (s) => s.field_type === "Livestock",
-  );
-  const unknownFarmers = data.results.filter(
-    (s) => s.field_type !== "Soil" && s.field_type !== "Livestock",
-  );
-  const total = data.results.length;
+ const getType = (s: Sample) =>
+  (s.field_type || "").toLowerCase().trim();
 
+const soilFarmers = data.results.filter(
+  (s) => getType(s) === "soil"
+);
+
+const livestockFarmers = data.results.filter(
+  (s) => getType(s) === "livestock"
+);
+
+const unknownFarmers = data.results.filter(
+  (s) => getType(s) === "water"
+);
+
+const total = data.results.length;
   // ===== SOIL HEALTH RATINGS =====
   const ratingCounts = {
     Excellent: soilFarmers.filter((s) => s.health_rating === "Excellent")
@@ -260,7 +266,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                 border: "border-purple-200",
               },
               {
-                label: "Unknown / Water",
+                label: "Water",
                 count: unknownFarmers.length,
                 icon: <AlertCircle className="w-8 h-8 text-gray-600" />,
                 bg: "bg-gray-50",
