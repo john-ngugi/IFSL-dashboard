@@ -116,7 +116,7 @@ const pulsingLayerStyle: LayerProps = {
 
 const countyBoundaries = "data/spatial/ken_admin2.geojson";
 const wards = "data/spatial/wards.geojson";
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 const wardsBorderLayer: LayerProps = {
   id: "wards-border",

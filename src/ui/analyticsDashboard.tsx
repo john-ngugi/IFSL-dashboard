@@ -43,7 +43,7 @@ import {
 } from "lucide-react";
 
 const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
-  apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000",
+  apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "",
 }) => {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);

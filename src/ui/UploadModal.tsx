@@ -27,7 +27,7 @@ const UploadModal: React.FC<UploadModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const BASE_URL = "http://127.0.0.1:8000";
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
   const validTypes = [
     "text/csv",
