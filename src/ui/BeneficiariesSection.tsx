@@ -10,6 +10,7 @@ interface WardData {
 interface WardStats {
   total_wards: number;
   total_points: number;
+  total_beneficiaries: number;
   wards: WardData[];
 }
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -32,7 +33,7 @@ const BeneficiariesSection: React.FC = () => {
         if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         const data: WardStats = await response.json();
         setWardStats(data);
-        setTargetCount(data.total_points);
+        setTargetCount(data.total_beneficiaries ?? data.total_points);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch data");
       } finally {
